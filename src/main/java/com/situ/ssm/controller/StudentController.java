@@ -37,8 +37,9 @@ public class StudentController {
 	}
 	
 	@RequestMapping(value="/pageList")
-	public List<Student> pageList() {
-		return null;
+	@ResponseBody
+	public PageBean<Student> pageList(StudentSearchCondition condition) {
+		return studentService.getPageBean(condition);
 		
 	}
 

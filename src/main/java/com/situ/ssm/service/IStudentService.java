@@ -12,6 +12,8 @@ public interface IStudentService {
 
 	boolean insert(Student student);
 
+	PageBean<Student> getPageBean(StudentSearchCondition condition);
+
 //	List<Student> list();
 //
 //	PageBean<Student> getPageBean(StudentSearchCondition condition);

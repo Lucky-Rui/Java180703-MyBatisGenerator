@@ -1,8 +1,8 @@
 package com.situ.ssm.vo;
 
 public class StudentSearchCondition {
-	private Integer pageNo;
-	private Integer pageSize;
+	private Integer pageNo = 1;
+	private Integer pageSize = 3;
 	private String name;
 	private Integer age;
 	private String gender;

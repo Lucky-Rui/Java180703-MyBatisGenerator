@@ -2,11 +2,14 @@ package com.situ.ssm.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
 import com.situ.ssm.entity.Student;
 import com.situ.ssm.entity.StudentExample;
+import com.situ.ssm.entity.StudentExample.Criteria;
 import com.situ.ssm.mapper.StudentMapper;
 import com.situ.ssm.service.IStudentService;
 import com.situ.ssm.vo.PageBean;
@@ -27,6 +30,36 @@ public class StudentServiceImpl implements IStudentService {
 	public boolean insert(Student student) {
 		int count = studentMapper.insert(student);
 		return count == 1 ? true : false;
+	}
+
+	@Override
+	public PageBean<Student> getPageBean(StudentSearchCondition condition) {
+		PageBean<Student> pageBean = new PageBean<>();
+		pageBean.setPageNo(condition.getPageNo());
+		pageBean.setPageSize(condition.getPageSize());
+		//totalCount
+		StudentExample studentExample = new StudentExample();
+		Criteria criteria = studentExample.createCriteria();
+		if (StringUtils.isNotEmpty(condition.getName())) {
+			criteria.andNameLike("%" + condition.getName() + "%");
+		}
+		if (condition.getAge() != null) {
+			criteria.andAgeEqualTo(condition.getAge());
+		}
+		if (StringUtils.isNotEmpty(condition.getGender())) {
+			criteria.andGenderEqualTo(condition.getGender());
+		}
+		Integer totalCount = studentMapper.countByExample(studentExample);
+		pageBean.setTotalCount(totalCount);
+		//totalPage
+		Integer totalPage = (int) Math.ceil((double)totalCount / condition.getPageSize());
+		pageBean.setTotalPage(totalPage);
+		//list
+		//PageHelper插件实现分页
+		PageHelper.startPage(condition.getPageNo(), condition.getPageSize());
+		List<Student> list = studentMapper.selectByExample(studentExample);
+		pageBean.setList(list);
+		return pageBean;
 	}
 
 //	@Override
